@@ -5,7 +5,7 @@ date: "June, 20267"
 output: html_document
 ---
 
-import packages
+Import packages
 ```{r include = TRUE, message=FALSE, eval = FALSE}
 library(dartR)
 library(ggplot2)
@@ -13,7 +13,7 @@ library(adegenet)
 library(ape)
 ```
 
-import data
+Import data
 ```{r}
 #Set working directory
 setwd("~/Desktop/Comparative-Landscape-Genomics")
@@ -120,7 +120,7 @@ Discard loci that might be possible paralogues (hamming distance)
 pdf("BM_paralogues_gle.pdf")
 gle <- gl.filter.hamming(gld, threshold=0.2)
 dev.off()
-
+ 
 #Print details
 gle
 
@@ -130,7 +130,7 @@ save(gle, file="BM_gle.rdata")
 Compare smear plots between the original and filtered datasets
 ```{r }
 pdf("BM_original_dataset_gl.pdf")
-plot(gl)
+plot(gl) 
 dev.off() 
 
 pdf("BM_filtered_dataset_gle.pdf")
