@@ -16,7 +16,7 @@ library(ape)
 import data
 ```{r}
 #Set working directory
-setwd("~/Desktop/Gariwerd_Adaptation/1_SNP_quality_control_filtering/1_1_BM")
+setwd("~/Desktop/Comparative-Landscape-Genomics")
 
 #Import the DArT genotype CSV file and the complementary CSV file containing sample metadata.
 gl <- gl.read.dart(filename = "Report_DBank22-6724_SNP_2.csv", ind.metafile = "BM_metadata.csv")
