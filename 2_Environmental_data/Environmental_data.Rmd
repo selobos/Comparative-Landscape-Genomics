@@ -1,0 +1,128 @@
+---
+title: "Environmental_data"
+author: "Simon E. Lobos"
+date: "June, 20267"
+output: html_document
+---
+
+Import packages
+```{r include = TRUE, message=FALSE, eval = FALSE}
+library(rgdal)
+library(raster)
+library(usdm)
+library(fields)
+```
+
+Import data
+```{r}
+#Set working directory
+setwd("~/Desktop/Comparative-Landscape-Genomics/Environmental_data")
+
+#load shapefiles
+Polygon <- readOGR(dsn =  paste0("Polygon_GNP.shp"), stringsAsFactors = F)
+gnp <- readOGR(dsn =  paste0("Grampians_Wh_2.shp"), stringsAsFactors = F)
+
+#load raster layers
+NDVI <- raster("NDVI.tif") #NDVI is the raster used as a reference template to adjust the resolution of all other layers
+TWI <- raster("TWI.tif")
+AVP <- raster("AVP.tif") 
+pHc <- raster("pHc.tif") 
+BIO01 <- raster("BIO01.tif")
+BIO05 <- raster("BIO05.tif")
+BIO12 <- raster("BIO12.tif")
+BIO14 <- raster("BIO14.tif")
+```
+
+Resample, crop, and mask raster layers
+```{r}
+#Topographic wetness index
+TWI = resample(TWI, NDVI, method="bilinear")
+TWI <- crop(TWI, Polygon) 
+TWI <- raster::mask(TWI, gnp)
+plot(TWI)
+writeRaster(TWI,"TWI_2.tif")
+
+#Available phosphorus
+AVP = resample(AVP, NDVI, method="bilinear")
+AVP <- crop(AVP, Polygon) 
+AVP <- raster::mask(AVP, gnp)
+plot(AVP)
+writeRaster(AVP,"AVP_2.tif")
+
+#Soil pH in water and CaCl2
+pHc = resample(pHc, NDVI, method="bilinear")
+pHc <- crop(pHc, Polygon) 
+pHc <- raster::mask(pHc, gnp)
+plot(pHc)
+writeRaster(pHc,"pHc_2.tif")
+
+#Annual mean temperature
+BIO01 = resample(BIO01, NDVI, method="bilinear")
+BIO01 <- crop(BIO01, Polygon) 
+BIO01 <- raster::mask(BIO01, gnp)
+plot(BIO01)
+writeRaster(BIO01,"BIO01_2.tif")
+
+#Maximum temperature of the warmest month
+BIO05 = resample(BIO05, NDVI, method="bilinear")
+BIO05 <- crop(BIO05, Polygon) 
+BIO05 <- raster::mask(BIO05, gnp)
+plot(BIO05)
+writeRaster(BIO05,"BIO05_2.tif")
+
+#Annual precipitation
+BIO12 = resample(BIO12, NDVI, method="bilinear")
+BIO12 <- crop(BIO12, Polygon) 
+BIO12 <- raster::mask(BIO12, gnp)
+plot(BIO12)
+writeRaster(BIO12,"BIO12_2.tif")
+
+#Precipitation of the driest month
+BIO14 = resample(BIO14, NDVI, method="bilinear")
+BIO14 <- crop(BIO14, Polygon) 
+BIO14 <- raster::mask(BIO14, gnp)
+plot(BIO14)
+writeRaster(BIO14,"BIO14_2.tif")
+
+#Stack raster layers
+Env.stack <- stack(TWI,AVP,pHc,BIO01,BIO05,BIO12,BIO14) 
+
+#Plot
+plot(Env.stack, col=(tim.colors(32)), frame=F, colNA = "black")
+```
+
+Correlation analysis
+```{r}
+#Correlation analysis was conducted following the method of Sales et al., (2021) https://doi.org/10.1111/geb.13271.
+
+#Load CSV file of geographic coordinates
+coords <- read.csv("Geo_coord_all_pops_Ch2.csv")
+
+#Extract Values from Raster
+ext <- extract(x = Env.stack, coords[,c('lon','lat')])
+ext <- data.frame(ext)
+
+#Identify collinear variables with correlation coefficients greater than 0.6 for exclusion.
+v1 <- vifcor(ext, th=0.6) 
+#4 variables from the 7 input variables have collinearity problem: 
+ 
+#BIO01 BIO12 BIO14 BIO05 
+
+#After excluding the collinear variables, the linear correlation coefficients ranges between: 
+#min correlation ( pHc ~ AVP ):  -0.4710104 
+#max correlation ( pHc ~ TWI ):  0.4924244 
+
+#---------- VIFs of the remained variables -------- 
+#  Variables      VIF
+#1       TWI 1.463000
+#2       AVP 1.424211
+#3       pHc 1.461445
+
+#Createa a new env. raster stack with correlated variables removed
+Env.stack.2 <- Env.stack[[-c(4,6,7)]] 
+
+plot(Env.stack.2, col=(tim.colors(32)), frame=F, colNA = "black")
+
+save(Env.stack.2, file = "Env.stack.2.RData")
+```
+
