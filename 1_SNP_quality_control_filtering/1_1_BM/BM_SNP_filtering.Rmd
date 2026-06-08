@@ -15,7 +15,7 @@ library(ape)
 
 Import data
 ```{r}
-#Set working directory
+#Set working directory 
 setwd("~/Desktop/Comparative-Landscape-Genomics/1_SNP_quality_control_filtering/1_1_BM")  
 
 #Import the DArT genotype CSV file and the complementary CSV file containing sample metadata.
