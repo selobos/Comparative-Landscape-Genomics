@@ -4,6 +4,8 @@
 #load packages
 library(gdata)
 
+setwd("~/Desktop/Comparative-Landscape-Genomics/3_GEA/3_1_BayPass/3_1_1_BM/3_1_1_1_Core")
+
 #Load genlight object
 load("~/Desktop/Comparative-Landscape-Genomics/1_SNP_quality_control_filtering/1_1_BM/BM_gle.rdata")
 
@@ -21,7 +23,7 @@ write.csv(pop, file = "BM_pop.csv")
 loc.names <- gle_order@loc.names
 write.csv(loc.names, file = "BM_loc.names.csv")
 
-longlat <- read.csv("/Volumes/Backup\ Plus/0_OneDrive/Thesis/3_Experiment/2_Chapter/2_2_Data/Genomic/BM/maf_2/run_2_2/gl2baypass/BM_lonlat.csv", header = TRUE)
+longlat <- read.csv("BM_lonlat.csv", header = TRUE)
 
 #Create function for converting to BayPass file 
 baypass_format <- function(INPUTFILE,LONGLAT,BAYPASSFILE){
