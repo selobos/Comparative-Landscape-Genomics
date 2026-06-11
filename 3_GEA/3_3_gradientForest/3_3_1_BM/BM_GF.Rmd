@@ -7,6 +7,9 @@ output: html_document
 
 Import packages
 ```{r set directory}
+#Code adapted from Luqman et al. (2023). https://doi.org/10.1038/s41467-023-36631-9
+#                  Gallegs et al. (2023). https://doi.org/10.1111/mec.16848
+
 setwd("~/Desktop/Comparative-Landscape-Genomics/3_GEA/3_3_gradientForest/3_3_1_BM")
 
 library(dplyr)
