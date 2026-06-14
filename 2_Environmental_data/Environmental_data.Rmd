@@ -19,11 +19,10 @@ Import data
 setwd("~/Desktop/Comparative-Landscape-Genomics/Environmental_data")
 
 #load shapefiles
-Polygon <- readOGR(dsn =  paste0("Polygon_GNP.shp"), stringsAsFactors = F)
-gnp <- readOGR(dsn =  paste0("Grampians_Wh_2.shp"), stringsAsFactors = F)
+Polygon <- readOGR(dsn =  paste0("Polygon_GNP.shp"), stringsAsFactors = F) #Study area boundary
+gnp <- readOGR(dsn =  paste0("Grampians_Wh_2.shp"), stringsAsFactors = F) #Gariwerd/Grampians National Park boundary
 
-#load raster layers
-NDVI <- raster("NDVI.tif") #NDVI is the raster used as a reference template to adjust the resolution of all other layers
+#load the seven environmental raster layers for GEA analyses
 TWI <- raster("TWI.tif")
 AVP <- raster("AVP.tif") 
 pHc <- raster("pHc.tif") 
@@ -31,6 +30,10 @@ BIO01 <- raster("BIO01.tif")
 BIO05 <- raster("BIO05.tif")
 BIO12 <- raster("BIO12.tif")
 BIO14 <- raster("BIO14.tif")
+
+#Normalized Difference Vegetation Index (NDVI) was used solely to standardise the spatial resolution of all raster layers (30m grid size).
+#NDVI was obtained from the dataset developed by John G. White (White et al., 2022. https://doi.org/10.1016/j.scitotenv.2022.158318).
+NDVI <- raster("NDVI.tif") 
 ```
 
 Resample, crop, and mask raster layers
@@ -119,22 +122,22 @@ v1 <- vifcor(ext, th=0.6)
 #3       pHc 1.461445
 
 #Createa a new env. raster stack with correlated variables removed
-Env.stack.2 <- Env.stack[[-c(4,6,7)]] 
+Env.stack.2 <- subset(Env.stack,c("TWI", "AVP", "pHc", "BIO05"))
 
 plot(Env.stack.2, col=(tim.colors(32)), frame=F, colNA = "black")
 
-save(Env.stack.2, file = "Env.stack.2.RData")
+save(Env.stack.2, file = "Env.stack.2.RData") 
 ```
 
 Extract environmental values from raster for each species
 ```{r}
-#Load species occurrence data
-BM_coord <- read.csv("BM_coords_Ch2.csv")
-CR_coord <- read.csv("BM_coords_Ch2.csv")
-EI_coord <- read.csv("EI_coords_Ch2.csv")
-EO_coord <- read.csv("EO_coords_Ch2.csv")
-GA_coord <- read.csv("GA_coords_Ch2.csv")
-XA_coord <- read.csv("XA_coords_Ch2.csv")
+#Load species occurrence data of each species
+BM_coord <- read.csv("BM_coords_Ch2.csv") #Banksia marginata
+CR_coord <- read.csv("BM_coords_Ch2.csv") #Callitris rhomboidea
+EI_coord <- read.csv("EI_coords_Ch2.csv") #Epacris impressa
+EO_coord <- read.csv("EO_coords_Ch2.csv") #Eucalyptus obliqua
+GA_coord <- read.csv("GA_coords_Ch2.csv") #Grevillea aquifolium
+XA_coord <- read.csv("XA_coords_Ch2.csv") #Xanthorrhoea australis
 
 #Extract values from Raster - Banksia marginata
 BM_Env_ext <- extract(x = Env.stack.2, BM_coord[,c('lon','lat')])
