@@ -21,7 +21,7 @@ library(ggplot2)
 Import data
 ```{r }
 #Set directory
-setwd("~/Desktop/Comparative-Landscape-Genomics/3_GEA/3_2_LFMM/3_2_1_BA/BM_LFMM2.Rmd")
+setwd("~/Desktop/Comparative-Landscape-Genomics/3_GEA/3_2_LFMM/3_2_1_BM")
 
 #Load genlight object
 load("~/Desktop/Comparative-Landscape-Genomics/1_SNP_quality_control_filtering/1_1_BM/BM_gle.rdata")
